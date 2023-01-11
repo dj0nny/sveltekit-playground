@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { error } from '@sveltejs/kit';
 	import type { ActionData } from './$types';
 
 	export let form: ActionData;
@@ -19,9 +18,10 @@
 				id="post_title"
 				name="post_title"
 				placeholder="Enter your post title"
-				class="{form?.errorField == 'title'
+				class="{form?.fieldErrors?.name
 					? 'file-input-error'
 					: ''} input input-bordered w-full max-w-md"
+				value={form?.fields?.title ? form?.fields?.title : ''}
 			/>
 		</fieldset>
 		<fieldset class="form-control mt-5 w-full max-w-md">
@@ -31,10 +31,9 @@
 			<textarea
 				id="post_body"
 				name="post_body"
-				class="{form?.errorField == 'body'
-					? 'file-input-error'
-					: ''} textarea textarea-bordered h-24"
 				placeholder="Hello there..."
+				class="{form?.fieldErrors?.body ? 'file-input-error' : ''} textarea textarea-bordered h-24"
+				value={form?.fields?.body ? form?.fields?.body : ''}
 			/>
 		</fieldset>
 		<fieldset class="form-control mt-5 w-full max-w-md">

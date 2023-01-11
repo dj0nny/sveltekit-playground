@@ -6,28 +6,36 @@ import prisma from '../../../hooks.server';
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData();
+		const title = formData.get('post_title');
+		const body = formData.get('post_body');
 
-		const newPostTitle = formData.get('post_title');
-		const newPostBody = formData.get('post_body');
-
-		if (!newPostTitle) {
+		if (typeof title !== 'string' || typeof body !== 'string') {
 			return fail(400, {
-				errorField: 'title',
-			});
-		}
-		if (!newPostBody) {
-			return fail(400, {
-				errorField: 'body',
+				fieldErrors: null,
+				fields: null,
+				formError: `Form not submitted correctly.`,
 			});
 		}
 
+		const fieldErrors = {
+			name: title === '' ? 'Name is empty' : null,
+			body: body === '' ? 'Body is empty' : null,
+		};
+
+		const fields = {
+			title,
+			body,
+		};
+
+		if (Object.values(fieldErrors).some(Boolean)) {
+			return fail(400, {
+				fieldErrors,
+				fields,
+				formError: null,
+			});
+		}
 		try {
-			await prisma.post.create({
-				data: {
-					title: newPostTitle.toString(),
-					body: newPostBody.toString(),
-				},
-			});
+			await prisma.post.create({ data: fields });
 		} catch (error) {
 			return fail(400, {
 				message: error,
